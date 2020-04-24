@@ -1,0 +1,12 @@
+{
+        "domain": "s3",
+        "name": "Amazon S3 custom component",
+        "documentation": "https://github.com/robmarkcole/HASS-S3",
+        "requirements": [
+                "boto3 == 1.9.69"
+        ],
+        "dependencies": [],
+        "codeowners": [
+                "@robmarkcole"
+        ]
+}

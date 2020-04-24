@@ -5,11 +5,12 @@ Provides a service for uploading files to a configured S3 bucket. Create your S3
 
 Add to your `configuration.yaml`:
 ```
-s3:
-  aws_access_key_id: AWS_ACCESS_KEY
-  aws_secret_access_key: AWS_SECRET_KEY
-  region_name: eu-west-1 # optional region, default is us-east-1
-  bucket: your_bucket_id
+sensor:
+  - platform: s3
+    aws_access_key_id: AWS_ACCESS_KEY
+    aws_secret_access_key: AWS_SECRET_KEY
+    region_name: eu-west-1 # optional region, default is us-east-1
+    bucket: your_bucket_id
 ```
 
 ## Services
