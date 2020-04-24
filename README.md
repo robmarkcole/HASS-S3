@@ -4,7 +4,7 @@ Home Assistant integration for AWS S3.
 Provides a service for uploading files to a configured S3 bucket. Create your S3 bucket via the AWS console, remember bucket names must be unique.
 
 Add to your `configuration.yaml`:
-```
+```yaml
 s3:
   aws_access_key_id: AWS_ACCESS_KEY
   aws_secret_access_key: AWS_SECRET_KEY
