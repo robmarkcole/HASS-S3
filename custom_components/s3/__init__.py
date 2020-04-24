@@ -73,6 +73,11 @@ async def async_setup(hass, config):
     def put_file(call):
         """Put file to S3."""
         file_path = call.data.get(FILE_PATH)
+
+        if not hass.config.is_allowed_path(file_path):
+            _LOGGER.error("Invalid file_path %s", file_path)
+            return
+
         _LOGGER.info(f"Received file_path : {file_path}")
 
     # Register our service with Home Assistant.
