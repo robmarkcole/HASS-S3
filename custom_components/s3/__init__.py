@@ -3,6 +3,7 @@ https://github.com/home-assistant/example-custom-config/blob/master/custom_compo
 """
 import asyncio
 import logging
+import os
 import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
@@ -79,8 +80,9 @@ async def async_setup(hass, config):
             _LOGGER.error("Invalid file_path %s", file_path)
             return
 
-        client.upload_file(Filename=file_path, Bucket=bucket, Key="test2.jpg")
-        _LOGGER.info(f"Put file {file_path} to S3 bucket {bucket}")
+        file_name = os.path.basename(file_path)
+        client.upload_file(Filename=file_path, Bucket=bucket, Key=file_name)
+        _LOGGER.info(f"Put file {file_name} to S3 bucket {bucket}")
 
     # Register our service with Home Assistant.
     hass.services.async_register(DOMAIN, "put", put_file)
