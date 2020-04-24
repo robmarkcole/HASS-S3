@@ -1,6 +1,4 @@
-"""AWS platform for S3.
-https://github.com/home-assistant/example-custom-config/blob/master/custom_components/expose_service_async/__init__.py
-"""
+"""AWS platform for S3."""
 import asyncio
 import logging
 import os
