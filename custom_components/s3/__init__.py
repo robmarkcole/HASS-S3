@@ -58,16 +58,17 @@ CONFIG_SCHEMA = vol.Schema(
 @asyncio.coroutine
 async def async_setup(hass, config):
     """Set up S3."""
+    conf = config[DOMAIN]
 
     import boto3
 
     aws_config = {
-        CONF_REGION: config.get(CONF_REGION),
-        CONF_ACCESS_KEY_ID: config.get(CONF_ACCESS_KEY_ID),
-        CONF_SECRET_ACCESS_KEY: config.get(CONF_SECRET_ACCESS_KEY),
+        CONF_REGION: conf[CONF_REGION],
+        CONF_ACCESS_KEY_ID: conf[CONF_ACCESS_KEY_ID],
+        CONF_SECRET_ACCESS_KEY: conf[CONF_SECRET_ACCESS_KEY],
     }
 
-    bucket = config.get(CONF_BUCKET)
+    bucket = conf[CONF_BUCKET]
     client = boto3.client("s3", **aws_config)  # Will not raise error.
 
     def put_file(call):
@@ -78,7 +79,8 @@ async def async_setup(hass, config):
             _LOGGER.error("Invalid file_path %s", file_path)
             return
 
-        _LOGGER.info(f"Received file_path : {file_path}")
+        client.upload_file(Filename=file_path, Bucket=bucket, Key="test2.jpg")
+        _LOGGER.info(f"Put file {file_path} to S3 bucket {bucket}")
 
     # Register our service with Home Assistant.
     hass.services.async_register(DOMAIN, "put", put_file)
