@@ -6,6 +6,8 @@ import logging
 import os
 import voluptuous as vol
 
+import boto3
+
 import homeassistant.helpers.config_validation as cv
 from homeassistant.core import callback
 
@@ -81,8 +83,11 @@ async def async_setup(hass, config):
             return
 
         file_name = os.path.basename(file_path)
-        client.upload_file(Filename=file_path, Bucket=bucket, Key=file_name)
-        _LOGGER.info(f"Put file {file_name} to S3 bucket {bucket}")
+        try:
+            client.upload_file(Filename=file_path, Bucket=bucket, Key=file_name)
+            _LOGGER.info(f"Put file {file_name} to S3 bucket {bucket}")
+        except boto3.exceptions.S3UploadFailedError as err:
+            _LOGGER.error(f"S3 upload error: {err}")
 
     # Register our service with Home Assistant.
     hass.services.async_register(DOMAIN, "put", put_file)
