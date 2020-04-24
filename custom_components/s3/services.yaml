@@ -1,2 +1,6 @@
-demo:
-    description: Demo service
+put:
+    description: Upload file to S3.
+    fields:
+      file_path:
+        description: File path on local filesystem.
+        example: /data/camera_files/snapshot.jpg

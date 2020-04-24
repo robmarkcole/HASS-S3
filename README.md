@@ -13,4 +13,10 @@ s3:
 ```
 
 ## Services
-The s3 entity exposes a `put` service for uploading files to S3, accepts the `file_path` and (optional, defaults to file_path) `key`
+The s3 entity exposes a `put` service for uploading files to S3, accepts the `file_path`.
+Example data for service call:
+```
+{
+  "file_path":"/some/path/file.jpg"
+}
+```

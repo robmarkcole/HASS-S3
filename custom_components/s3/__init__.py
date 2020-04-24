@@ -15,6 +15,7 @@ CONF_REGION = "region_name"
 CONF_ACCESS_KEY_ID = "aws_access_key_id"
 CONF_SECRET_ACCESS_KEY = "aws_secret_access_key"
 DOMAIN = "s3"
+FILE_PATH = "file_path"
 
 DEFAULT_REGION = "us-east-1"
 SUPPORTED_REGIONS = [
@@ -36,9 +37,6 @@ SUPPORTED_REGIONS = [
 ]
 
 REQUIREMENTS = ["boto3 == 1.9.69"]
-
-ATTR_NAME = "name"
-DEFAULT_NAME = "World"
 
 CONFIG_SCHEMA = vol.Schema(
     {
@@ -72,12 +70,12 @@ async def async_setup(hass, config):
     bucket = config.get(CONF_BUCKET)
     client = boto3.client("s3", **aws_config)  # Will not raise error.
 
-    def my_service(call):
-        """My first service."""
-        name = call.data.get(ATTR_NAME, DEFAULT_NAME)
-        _LOGGER.info(f"Received name {name}")
+    def put_file(call):
+        """Put file to S3."""
+        file_path = call.data.get(FILE_PATH)
+        _LOGGER.info(f"Received file_path : {file_path}")
 
     # Register our service with Home Assistant.
-    hass.services.async_register(DOMAIN, "demo", my_service)
+    hass.services.async_register(DOMAIN, "put", put_file)
 
     return True
