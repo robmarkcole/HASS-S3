@@ -24,3 +24,6 @@ Example data for service call:
 ```
 
 The file will be put in the configured bucket with key `file.jpg`
+
+## Accessing S3
+I recommend [Filezilla](https://filezilla-project.org/) for connecting to your S3 bucket, free version is available.
