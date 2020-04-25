@@ -1,9 +1,10 @@
 # HASS-S3
 Home Assistant integration for AWS S3.
 
-Provides a service for uploading files to a configured S3 bucket. Create your S3 bucket via the AWS console, remember bucket names must be unique. I created a bucket with the default access settings (allpublic OFF) and created a bucket name with format `my-bucket-ransom_number` with `random_number` generated [on this website](https://onlinehashtools.com/generate-random-md5-hash).
+This custom integration provides a service for uploading files to a configured S3 bucket. Create your S3 bucket via the AWS console, remember bucket names must be unique. I created a bucket with the default access settings (allpublic OFF) and created a bucket name with format `my-bucket-ransom_number` with `random_number` generated [on this website](https://onlinehashtools.com/generate-random-md5-hash).
 
-Add to your `configuration.yaml`:
+## Installation and configuration
+Place the custom_components folder in your configuration directory (or add its contents to an existing custom_components folder). Add to your `configuration.yaml`:
 ```yaml
 s3:
   aws_access_key_id: AWS_ACCESS_KEY
