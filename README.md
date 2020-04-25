@@ -1,7 +1,7 @@
 # HASS-S3
 Home Assistant integration for AWS S3.
 
-Provides a service for uploading files to a configured S3 bucket. Create your S3 bucket via the AWS console, remember bucket names must be unique.
+Provides a service for uploading files to a configured S3 bucket. Create your S3 bucket via the AWS console, remember bucket names must be unique. I created a bucket with the default access settings (allpublic OFF) and created a bucket name with format `my-bucket-ransom_number` with `random_number` generated [on this website](https://onlinehashtools.com/generate-random-md5-hash).
 
 Add to your `configuration.yaml`:
 ```yaml
@@ -24,6 +24,25 @@ Example data for service call:
 ```
 
 The file will be put in the configured bucket with key `file.jpg`
+
+## Example automation
+The following automation uses the [folder_watcher](https://www.home-assistant.io/integrations/folder_watcher/) to automatically upload files created in the local filesystem to S3:
+
+```yaml
+- id: '1587784389530'
+  alias: upload-file-to-S3
+  description: 'When a new file is created, upload to S3'
+  trigger:
+    event_type: folder_watcher
+    platform: event
+    event_data:
+      event_type: created
+  action:
+    service: s3.put
+    data_template:
+      file_path: "{{ trigger.event.data.path }}"
+```
+Note you must configure `folder_watcher`.
 
 ## Accessing S3
 I recommend [Filezilla](https://filezilla-project.org/) for connecting to your S3 bucket, free version is available.
