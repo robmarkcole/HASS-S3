@@ -2,7 +2,7 @@
     "name": "AWS S3",
     "country": "UK",
     "domains": [
-        "s3",
+        "s3"
     ],
     "homeassistant": "0.108.0"
 }
