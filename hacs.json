@@ -4,5 +4,6 @@
     "domains": [
         "s3"
     ],
-    "homeassistant": "0.108.0"
+    "homeassistant": "0.108.0",
+    "render_readme": true
 }
