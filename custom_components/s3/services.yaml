@@ -1,6 +1,12 @@
 put:
-    description: Upload file to S3.
-    fields:
-      file_path:
-        description: File path on local filesystem.
-        example: /data/camera_files/snapshot.jpg
+  description: Upload file to S3.
+  fields:
+    bucket:
+      description: S3 bucket to receive upload
+      example: my_bucket
+    file_path:
+      description: File on local filesystem to upload
+      example: /data/camera_files/snapshot.jpg
+    storage_class:
+      description: S3 storage class (defaults to STANDARD) [ STANDARD | REDUCED_REDUNDANCY | STANDARD_IA | ONEZONE_IA | INTELLIGENT_TIERING | GLACIER | DEEP_ARCHIVE ]
+      example: STANDARD_IA
