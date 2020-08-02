@@ -4,13 +4,17 @@ Home Assistant integration for AWS S3.
 This custom integration provides a service for uploading files to a configured S3 bucket. Create your S3 bucket via the AWS console, remember bucket names must be unique. I created a bucket with the default access settings (allpublic OFF) and created a bucket name with format `my-bucket-ransom_number` with `random_number` generated [on this website](https://onlinehashtools.com/generate-random-md5-hash).
 
 ## Installation and configuration
-Place the custom_components folder in your configuration directory (or add its contents to an existing custom_components folder). Add to your `configuration.yaml`:
+Place the custom_components folder in your configuration directory (or add its contents to an existing custom_components folder). Add an Amazon S3 bucket configuation from the Home Assistant configuration UI or add to your `configuration.yaml`:
 ```yaml
 s3:
-  aws_access_key_id: AWS_ACCESS_KEY
-  aws_secret_access_key: AWS_SECRET_KEY
-  region_name: eu-west-1 # optional region, default is us-east-1
-  bucket: your_bucket_id
+  - aws_access_key_id: AWS_ACCESS_KEY
+    aws_secret_access_key: AWS_SECRET_KEY
+    region_name: eu-west-1 # optional region, default is us-east-1
+    bucket: your_bucket_id
+  - aws_access_key_id: AWS_ACCESS_KEY
+    aws_secret_access_key: AWS_SECRET_KEY
+    region_name: us-east-2 # optional region, default is us-east-1
+    bucket: your_other_bucket_id
 ```
 
 ## Services
@@ -20,7 +24,9 @@ Example data for service call:
 
 ```
 {
-  "file_path":"/some/path/file.jpg"
+  "bucket":"my_bucket",
+  "file_path":"/some/path/file.jpg",
+  "storage_class":"STANDARD_IA"
 }
 ```
 
@@ -41,7 +47,9 @@ The following automation uses the [folder_watcher](https://www.home-assistant.io
   action:
     service: s3.put
     data_template:
+      bucket: "my_bucket"
       file_path: "{{ trigger.event.data.path }}"
+      storage_class: "STANDARD_IA"
 ```
 Note you must configure `folder_watcher`.
 
