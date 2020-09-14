@@ -4,7 +4,7 @@
         "documentation": "https://github.com/robmarkcole/HASS-S3",
         "issue_tracker": "https://github.com/robmarkcole/HASS-S3/issues",
         "requirements": [
-                "boto3 == 1.9.69"
+                "boto3==1.9.69"
         ],
         "dependencies": [],
         "codeowners": [
