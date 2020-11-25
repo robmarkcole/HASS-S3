@@ -32,6 +32,7 @@ SUPPORTED_REGIONS = [
     "eu-central-1",
     "eu-west-2",
     "eu-west-3",
+    "eu-north-1",
     "ap-southeast-1",
     "ap-southeast-2",
     "ap-northeast-2",
@@ -47,28 +48,21 @@ STORAGE_CLASSES = [
     "ONEZONE_IA",
     "INTELLIGENT_TIERING",
     "GLACIER",
-    "DEEP_ARCHIVE"
+    "DEEP_ARCHIVE",
 ]
 
 REQUIREMENTS = ["boto3 == 1.9.69"]
 
 S3_SCHEMA = vol.Schema(
     {
-        vol.Optional(CONF_REGION, default=DEFAULT_REGION): vol.In(
-            SUPPORTED_REGIONS
-        ),
+        vol.Optional(CONF_REGION, default=DEFAULT_REGION): vol.In(SUPPORTED_REGIONS),
         vol.Required(CONF_ACCESS_KEY_ID): cv.string,
         vol.Required(CONF_SECRET_ACCESS_KEY): cv.string,
         vol.Required(CONF_BUCKET): cv.string,
     }
 )
 
-CONFIG_SCHEMA = vol.Schema(
-    {
-        DOMAIN: vol.All(cv.ensure_list, [S3_SCHEMA])
-    },
-    extra=vol.ALLOW_EXTRA,
-)
+CONFIG_SCHEMA = vol.Schema({DOMAIN: vol.All(cv.ensure_list, [S3_SCHEMA])}, extra=vol.ALLOW_EXTRA,)
 
 
 async def async_setup(hass: HomeAssistant, config: dict):
@@ -77,9 +71,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
     if DOMAIN in config:
         for entry in config[DOMAIN]:
             hass.async_create_task(
-                hass.config_entries.flow.async_init(
-                    DOMAIN, context={"source": SOURCE_USER}, data=entry
-                )
+                hass.config_entries.flow.async_init(DOMAIN, context={"source": SOURCE_USER}, data=entry)
             )
 
     def put_file(call):
@@ -106,14 +98,10 @@ async def async_setup(hass: HomeAssistant, config: dict):
             return
 
         file_name = os.path.basename(file_path)
-        extra_args = {'StorageClass': storage_class}
+        extra_args = {"StorageClass": storage_class}
         try:
-            s3_client.upload_file(Filename=file_path,
-                                  Bucket=bucket,
-                                  Key=file_name,
-                                  ExtraArgs=extra_args)
-            _LOGGER.info(
-                f"Put file {file_name} to S3 bucket {bucket} using storage class {storage_class}")
+            s3_client.upload_file(Filename=file_path, Bucket=bucket, Key=file_name, ExtraArgs=extra_args)
+            _LOGGER.info(f"Put file {file_name} to S3 bucket {bucket} using storage class {storage_class}")
         except boto3.exceptions.S3UploadFailedError as err:
             _LOGGER.error(f"S3 upload error: {err}")
 
@@ -134,8 +122,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     bucket = entry.data[CONF_BUCKET]
 
-    _LOGGER.debug("AWS config for bucket [%s]: %s", bucket,
-                  {**aws_config, CONF_SECRET_ACCESS_KEY: 'SHH_ITS_A_SECRET'})
+    _LOGGER.debug("AWS config for bucket [%s]: %s", bucket, {**aws_config, CONF_SECRET_ACCESS_KEY: "SHH_ITS_A_SECRET"})
 
     client = boto3.client("s3", **aws_config)  # Will not raise error.
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = client
