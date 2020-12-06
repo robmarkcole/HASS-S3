@@ -4,6 +4,9 @@ put:
     bucket:
       description: S3 bucket to receive upload
       example: my_bucket
+    key:
+      description: key to use
+      example: my_key/snapshot.jpg
     file_path:
       description: File on local filesystem to upload
       example: /data/camera_files/snapshot.jpg
