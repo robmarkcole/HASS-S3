@@ -12,14 +12,17 @@ from homeassistant.config_entries import SOURCE_USER, ConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 
-CONF_BUCKET = "bucket"
 CONF_REGION = "region_name"
 CONF_ACCESS_KEY_ID = "aws_access_key_id"
 CONF_SECRET_ACCESS_KEY = "aws_secret_access_key"
+
+BUCKET = "bucket"
 DOMAIN = "s3"
 FILE_PATH = "file_path"
-STORAGE_CLASS = "storage_class"
+KEY = "key"
 PUT_SERVICE = "put"
+STORAGE_CLASS = "storage_class"
+
 
 DEFAULT_REGION = "us-east-1"
 SUPPORTED_REGIONS = [
@@ -51,14 +54,13 @@ STORAGE_CLASSES = [
     "DEEP_ARCHIVE",
 ]
 
-REQUIREMENTS = ["boto3 == 1.9.69"]
+REQUIREMENTS = ["boto3==1.9.252"]
 
 S3_SCHEMA = vol.Schema(
     {
         vol.Optional(CONF_REGION, default=DEFAULT_REGION): vol.In(SUPPORTED_REGIONS),
         vol.Required(CONF_ACCESS_KEY_ID): cv.string,
         vol.Required(CONF_SECRET_ACCESS_KEY): cv.string,
-        vol.Required(CONF_BUCKET): cv.string,
     }
 )
 
@@ -76,7 +78,8 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
     def put_file(call):
         """Put file to S3."""
-        bucket = call.data.get(CONF_BUCKET)
+        bucket = call.data.get(BUCKET)
+        key = call.data.get(KEY)
         file_path = call.data.get(FILE_PATH)
         storage_class = call.data.get(STORAGE_CLASS, "STANDARD")
 
@@ -90,9 +93,8 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
         s3_client = None
         for entry in hass.config_entries.async_entries(DOMAIN):
-            if entry.data[CONF_BUCKET] == call.data[CONF_BUCKET]:
-                s3_client = hass.data[DOMAIN][entry.entry_id]
-                break
+            s3_client = hass.data[DOMAIN][entry.entry_id]
+            break
         if s3_client is None:
             _LOGGER.error("S3 client instance not found")
             return
@@ -100,14 +102,15 @@ async def async_setup(hass: HomeAssistant, config: dict):
         file_name = os.path.basename(file_path)
         extra_args = {"StorageClass": storage_class}
         try:
-            s3_client.upload_file(Filename=file_path, Bucket=bucket, Key=file_name, ExtraArgs=extra_args)
-            _LOGGER.info(f"Put file {file_name} to S3 bucket {bucket} using storage class {storage_class}")
+            s3_client.upload_file(Filename=file_path, Bucket=bucket, Key=key, ExtraArgs=extra_args)
+            _LOGGER.info(
+                f"Put file {file_name} to S3 bucket {bucket} with key {key} using storage class {storage_class}"
+            )
         except boto3.exceptions.S3UploadFailedError as err:
             _LOGGER.error(f"S3 upload error: {err}")
 
     # Register our service with Home Assistant.
     hass.services.async_register(DOMAIN, PUT_SERVICE, put_file)
-
     return True
 
 
@@ -119,14 +122,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         CONF_ACCESS_KEY_ID: entry.data[CONF_ACCESS_KEY_ID],
         CONF_SECRET_ACCESS_KEY: entry.data[CONF_SECRET_ACCESS_KEY],
     }
-
-    bucket = entry.data[CONF_BUCKET]
-
-    _LOGGER.debug("AWS config for bucket [%s]: %s", bucket, {**aws_config, CONF_SECRET_ACCESS_KEY: "SHH_ITS_A_SECRET"})
-
     client = boto3.client("s3", **aws_config)  # Will not raise error.
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = client
-
     return True
 
 
@@ -135,5 +132,4 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     if not hass.data[DOMAIN]:
         hass.services.async_remove(DOMAIN, PUT_SERVICE)
-
     return True

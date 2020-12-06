@@ -6,8 +6,7 @@
                 "title": "Configure Amazon S3",
                 "description": "Store files in Amazon Simple Storage Service",
                 "data": {
-                    "bucket": "Bucket Name",
-                    "region_name": "Bucket Region",
+                    "region_name": "AWS bucket Region",
                     "aws_access_key_id": "AWS Access Key",
                     "aws_secret_access_key": "AWS Secret Access Key"
                 }

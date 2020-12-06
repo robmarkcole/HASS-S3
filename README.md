@@ -1,20 +1,15 @@
 # HASS-S3
-Home Assistant integration for AWS S3.
+This custom integration provides a service for uploading files to an S3 bucket. Create your S3 bucket via the AWS console, remember bucket names must be unique. I created a bucket with the default access settings (allpublic OFF) and created a bucket name with format `my-bucket-ransom_number` with `random_number` generated [on this website](https://onlinehashtools.com/generate-random-md5-hash).
 
-This custom integration provides a service for uploading files to a configured S3 bucket. Create your S3 bucket via the AWS console, remember bucket names must be unique. I created a bucket with the default access settings (allpublic OFF) and created a bucket name with format `my-bucket-ransom_number` with `random_number` generated [on this website](https://onlinehashtools.com/generate-random-md5-hash).
+**Note** for a local and self-hosted alternative checkout the official [Minio integration](https://www.home-assistant.io/integrations/minio/).
 
 ## Installation and configuration
-Place the custom_components folder in your configuration directory (or add its contents to an existing custom_components folder). Add an Amazon S3 bucket configuation from the Home Assistant configuration UI or add to your `configuration.yaml`:
+Place the `custom_components` folder in your configuration directory (or add its contents to an existing custom_components folder). Add to your Home Assistant configuration UI or add to your `configuration.yaml`:
 ```yaml
 s3:
-  - aws_access_key_id: AWS_ACCESS_KEY
-    aws_secret_access_key: AWS_SECRET_KEY
-    region_name: eu-west-1 # optional region, default is us-east-1
-    bucket: your_bucket_id
-  - aws_access_key_id: AWS_ACCESS_KEY
-    aws_secret_access_key: AWS_SECRET_KEY
-    region_name: us-east-2 # optional region, default is us-east-1
-    bucket: your_other_bucket_id
+  aws_access_key_id: AWS_ACCESS_KEY
+  aws_secret_access_key: AWS_SECRET_KEY
+  region_name: eu-west-1 # optional region, default is us-east-1
 ```
 
 ## Services
@@ -25,12 +20,13 @@ Example data for service call:
 ```
 {
   "bucket":"my_bucket",
+  "key":"my_key/file.jpg",
   "file_path":"/some/path/file.jpg",
-  "storage_class":"STANDARD_IA"
+  "storage_class":"STANDARD_IA" # optional
 }
 ```
 
-The file will be put in the configured bucket with key `file.jpg`
+The file will be put in the bucket with key
 
 ## Example automation
 The following automation uses the [folder_watcher](https://www.home-assistant.io/integrations/folder_watcher/) to automatically upload files created in the local filesystem to S3:
@@ -48,6 +44,7 @@ The following automation uses the [folder_watcher](https://www.home-assistant.io
     service: s3.put
     data_template:
       bucket: "my_bucket"
+      key: "input/{{ now().year }}/{{ (now().month | string).zfill(2) }}/{{ (now().day | string).zfill(2) }}/{{ trigger.event.data.file }}"
       file_path: "{{ trigger.event.data.path }}"
       storage_class: "STANDARD_IA"
 ```
