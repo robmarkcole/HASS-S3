@@ -1,7 +1,7 @@
 # HASS-S3
-Home Assistant integration for AWS S3.
-
 This custom integration provides a service for uploading files to an S3 bucket. Create your S3 bucket via the AWS console, remember bucket names must be unique. I created a bucket with the default access settings (allpublic OFF) and created a bucket name with format `my-bucket-ransom_number` with `random_number` generated [on this website](https://onlinehashtools.com/generate-random-md5-hash).
+
+**Note** for a local and self-hosted alternative checkout the official [Minio integration](https://www.home-assistant.io/integrations/minio/).
 
 ## Installation and configuration
 Place the `custom_components` folder in your configuration directory (or add its contents to an existing custom_components folder). Add to your Home Assistant configuration UI or add to your `configuration.yaml`:
