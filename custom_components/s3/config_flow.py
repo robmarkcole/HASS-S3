@@ -16,6 +16,12 @@ class S3ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     async def async_step_user(self, user_input=None):
+        if user_input is not None:
+            await self.async_set_unique_id(user_input[CONF_ACCESS_KEY_ID])
+            self._abort_if_unique_id_configured()
+            
+            return self.async_create_entry(title=user_input[CONF_ACCESS_KEY_ID], data=user_input)
+
         data_schema = vol.Schema(
             {
                 vol.Optional(CONF_REGION, default=DEFAULT_REGION): vol.In(SUPPORTED_REGIONS),
