@@ -1,5 +1,7 @@
 # HASS-S3
-This custom integration provides a service for uploading files to an S3 bucket. Create your S3 bucket via the AWS console, remember bucket names must be unique. I created a bucket with the default access settings (allpublic OFF) and created a bucket name with format `my-bucket-ransom_number` with `random_number` generated [on this website](https://onlinehashtools.com/generate-random-md5-hash).
+This custom integration provides a service for interacting with S3 including uploading files to a bucket or moving them between folders and buckets. 
+
+Create your S3 bucket via the AWS console, remember bucket names must be unique. I created a bucket with the default access settings (allpublic OFF) and created a bucket name with format `my-bucket-ransom_number` with `random_number` generated [on this website](https://onlinehashtools.com/generate-random-md5-hash).
 
 **Note** for a local and self-hosted alternative checkout the official [Minio integration](https://www.home-assistant.io/integrations/minio/).
 
@@ -13,20 +15,41 @@ s3:
 ```
 
 ## Services
-The s3 entity exposes a `put` service for uploading files to S3. The key for the uploaded file will be the file name.
+### Put Service
+The s3 entity exposes a `put` service for uploading files to S3.
 
 Example data for service call:
 
 ```
 {
-  "bucket":"my_bucket",
-  "key":"my_key/file.jpg",
-  "file_path":"/some/path/file.jpg",
-  "storage_class":"STANDARD_IA" # optional
+  "bucket": "my_bucket",
+  "key": "my_key/file.jpg",
+  "file_path": "/some/path/file.jpg",
+  "storage_class": "STANDARD_IA" # optional
 }
 ```
 
-The file will be put in the bucket with key
+### Copy Service
+The s3 entity exposes a `copy` service for moving files around in S3.
+
+Example data for service call:
+```
+{
+  "bucket": "my_bucket",
+  "key_source": "my_key/file_source.jpg",  
+  "key_destination": "my_key/file_destination.jpg"
+}
+```
+
+If you need to move items between buckets use this syntax:
+```
+{
+  "bucket_source": "my_source_bucket",
+  "key_source": "my_key/file_source.jpg",
+  "bucket_destintation": "my_destination_bucket",
+  "key_destination": "my_key/file_destination.jpg"
+}
+```
 
 ## Example automation
 The following automation uses the [folder_watcher](https://www.home-assistant.io/integrations/folder_watcher/) to automatically upload files created in the local filesystem to S3:
