@@ -17,18 +17,18 @@ CONF_REGION = "region_name"
 CONF_ACCESS_KEY_ID = "aws_access_key_id"
 CONF_SECRET_ACCESS_KEY = "aws_secret_access_key"
 
+DOMAIN = "s3"
+COPY_SERVICE = "copy"
+PUT_SERVICE = "put"
+
 BUCKET = "bucket"
 BUCKET_SOURCE = "bucket_source"
 BUCKET_DESTINATION = "bucket_destination"
-DOMAIN = "s3"
 FILE_PATH = "file_path"
 KEY = "key"
-KEY_SOURCE = "key_source"
 KEY_DESTINATION = "key_destination"
-PUT_SERVICE = "put"
-COPY_SERVICE = "copy"
+KEY_SOURCE = "key_source"
 STORAGE_CLASS = "storage_class"
-
 
 DEFAULT_REGION = "us-east-1"
 SUPPORTED_REGIONS = [
