@@ -109,7 +109,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
         extra_args = {"StorageClass": storage_class}
         try:
             s3_client.upload_file(Filename=file_path, Bucket=bucket, Key=key, ExtraArgs=extra_args)
-            _LOGGER.debug(
+            _LOGGER.info(
                 f"Put file {file_name} to S3 bucket {bucket} with key {key} using storage class {storage_class}"
             )
         except botocore.exceptions.ClientError as err:
@@ -149,7 +149,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
         try:
             s3_client.copy(copy_source, bucket_destination, key_destination)
-            _LOGGER.debug(
+            _LOGGER.info(
                 f"Copied file {bucket_source}/{key_source} to {bucket_destination}/{key_destination}"
             )
         except botocore.exceptions.ClientError as err:
