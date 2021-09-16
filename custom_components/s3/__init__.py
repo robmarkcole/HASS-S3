@@ -5,6 +5,7 @@ import os
 import voluptuous as vol
 
 import boto3
+import botocore
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.core import HomeAssistant, callback
@@ -17,10 +18,15 @@ CONF_ACCESS_KEY_ID = "aws_access_key_id"
 CONF_SECRET_ACCESS_KEY = "aws_secret_access_key"
 
 BUCKET = "bucket"
+BUCKET_SOURCE = "bucket_source"
+BUCKET_DESTINATION = "bucket_destination"
 DOMAIN = "s3"
 FILE_PATH = "file_path"
 KEY = "key"
+KEY_SOURCE = "key_source"
+KEY_DESTINATION = "key_destination"
 PUT_SERVICE = "put"
+COPY_SERVICE = "copy"
 STORAGE_CLASS = "storage_class"
 
 
@@ -103,14 +109,56 @@ async def async_setup(hass: HomeAssistant, config: dict):
         extra_args = {"StorageClass": storage_class}
         try:
             s3_client.upload_file(Filename=file_path, Bucket=bucket, Key=key, ExtraArgs=extra_args)
-            _LOGGER.info(
+            _LOGGER.debug(
                 f"Put file {file_name} to S3 bucket {bucket} with key {key} using storage class {storage_class}"
             )
-        except boto3.exceptions.S3UploadFailedError as err:
+        except botocore.exceptions.ClientError as err:
             _LOGGER.error(f"S3 upload error: {err}")
+
+    def copy_file(call):
+        """Copy a file on S3."""
+        bucket_source = call.data.get(BUCKET_SOURCE)
+        if bucket_source is None:
+            bucket_source = call.data.get(BUCKET)
+
+        bucket_destination = call.data.get(BUCKET_DESTINATION)
+        if bucket_destination is None:
+            bucket_destination = call.data.get(BUCKET)
+
+        key_source = call.data.get(KEY_SOURCE)
+        key_destination = call.data.get(KEY_DESTINATION)
+
+        if bucket_source is None or bucket_destination is None or key_source is None or key_destination is None:
+            _LOGGER.error(
+                f"Invalid copy paramaters from {bucket_source}/{key_source} to {bucket_destination}/{key_destination}"
+            )
+            return
+
+        s3_client = None
+        for entry in hass.config_entries.async_entries(DOMAIN):
+            s3_client = hass.data[DOMAIN][entry.entry_id]
+            break
+        if s3_client is None:
+            _LOGGER.error("S3 client instance not found")
+            return
+        
+        copy_source = {
+            'Bucket': bucket_source,
+            'Key': key_source
+        }
+
+        try:
+            s3_client.copy(copy_source, bucket_destination, key_destination)
+            _LOGGER.debug(
+                f"Copied file {bucket_source}/{key_source} to {bucket_destination}/{key_destination}"
+            )
+        except botocore.exceptions.ClientError as err:
+            _LOGGER.error(f"S3 copy error: {err}")
+
 
     # Register our service with Home Assistant.
     hass.services.async_register(DOMAIN, PUT_SERVICE, put_file)
+    hass.services.async_register(DOMAIN, COPY_SERVICE, copy_file)
     return True
 
 
