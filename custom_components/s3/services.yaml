@@ -13,3 +13,15 @@ put:
     storage_class:
       description: S3 storage class (defaults to STANDARD) [ STANDARD | REDUCED_REDUNDANCY | STANDARD_IA | ONEZONE_IA | INTELLIGENT_TIERING | GLACIER | DEEP_ARCHIVE ]
       example: STANDARD_IA
+copy:
+  description: Copy file from one location in s3 to another.
+  fields:
+    bucket:
+      description: Source and destination S3 bucket
+      example: my_bucket
+    key_source:
+      description: key to copy from
+      example: my_key/snapshot.jpg
+    key_destination:
+      description: key to copy to
+      example: my_key/snapshot.jpg
