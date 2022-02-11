@@ -20,6 +20,7 @@ CONF_SECRET_ACCESS_KEY = "aws_secret_access_key"
 DOMAIN = "s3"
 COPY_SERVICE = "copy"
 PUT_SERVICE = "put"
+DELETE_SERVICE = "delete"
 
 BUCKET = "bucket"
 BUCKET_SOURCE = "bucket_source"
@@ -155,10 +156,31 @@ async def async_setup(hass: HomeAssistant, config: dict):
         except botocore.exceptions.ClientError as err:
             _LOGGER.error(f"S3 copy error: {err}")
 
+    def delete_file(call):
+        """Put file to S3."""
+        bucket = call.data.get(BUCKET)
+        key = call.data.get(KEY)
+
+        s3_client = None
+        for entry in hass.config_entries.async_entries(DOMAIN):
+            s3_client = hass.data[DOMAIN][entry.entry_id]
+            break
+        if s3_client is None:
+            _LOGGER.error("S3 client instance not found")
+            return
+
+        try:
+            s3_client.delete_object(Key=key, Bucket=bucket)
+            _LOGGER.info(
+                f"Delete file with key {key} from S3 bucket {bucket}"
+            )
+        except botocore.exceptions.ClientError as err:
+            _LOGGER.error(f"S3 delete error: {err}")
 
     # Register our service with Home Assistant.
     hass.services.async_register(DOMAIN, PUT_SERVICE, put_file)
     hass.services.async_register(DOMAIN, COPY_SERVICE, copy_file)
+    hass.services.async_register(DOMAIN, DELETE_SERVICE, delete_file)
     return True
 
 

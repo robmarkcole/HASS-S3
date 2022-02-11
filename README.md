@@ -51,6 +51,17 @@ If you need to move items between buckets use this syntax:
 }
 ```
 
+### Delete Service
+The s3 entity exposes a `delete` service for deleting files (objects) from S3.
+
+Example data for service call:
+```
+{
+  "bucket": "my_bucket",
+  "key": "my_key/file_source.jpg",  
+}
+```
+
 ## Example automation
 The following automation uses the [folder_watcher](https://www.home-assistant.io/integrations/folder_watcher/) to automatically upload files created in the local filesystem to S3:
 
