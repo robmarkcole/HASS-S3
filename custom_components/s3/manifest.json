@@ -3,7 +3,7 @@
         "name": "Amazon S3",
         "documentation": "https://github.com/robmarkcole/HASS-S3",
         "issue_tracker": "https://github.com/robmarkcole/HASS-S3/issues",
-        "version": "1.2.0",
+        "version": "1.3.0",
         "requirements": [
                 "boto3==1.9.252"
         ],

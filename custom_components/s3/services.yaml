@@ -25,3 +25,12 @@ copy:
     key_destination:
       description: key to copy to
       example: my_key/snapshot.jpg
+delete:
+  description: Delete object from S3.
+  fields:
+    bucket:
+      description: S3 bucket to delete from
+      example: my_bucket
+    key:
+      description: key of object to delete
+      example: my_key/snapshot.jpg
