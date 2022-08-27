@@ -21,6 +21,7 @@ DOMAIN = "s3"
 COPY_SERVICE = "copy"
 PUT_SERVICE = "put"
 DELETE_SERVICE = "delete"
+SIGN_SERVICE = "signurl"
 
 BUCKET = "bucket"
 BUCKET_SOURCE = "bucket_source"
@@ -30,6 +31,7 @@ KEY = "key"
 KEY_DESTINATION = "key_destination"
 KEY_SOURCE = "key_source"
 STORAGE_CLASS = "storage_class"
+DURATION = "duration"
 
 DEFAULT_REGION = "us-east-1"
 SUPPORTED_REGIONS = [
@@ -177,10 +179,45 @@ async def async_setup(hass: HomeAssistant, config: dict):
         except botocore.exceptions.ClientError as err:
             _LOGGER.error(f"S3 delete error: {err}")
 
+    def create_presigned_url(call):
+        """Generate a presigned URL to share an S3 object
+
+        :param bucket_name: string
+        :param object_name: string
+        :param expiration: Time in seconds for the presigned URL to remain valid
+        :return: Presigned URL as string. If error, returns None.
+        """
+        bucket = call.data.get(BUCKET)
+        key = call.data.get(KEY)
+        duration = call.data.get(DURATION)
+
+    # Generate a presigned URL for the S3 object
+        s3_client = None
+        for entry in hass.config_entries.async_entries(DOMAIN):
+            s3_client = hass.data[DOMAIN][entry.entry_id]
+            break
+        if s3_client is None:
+            _LOGGER.error("S3 client instance not found")
+            return
+
+        try:
+            URL = s3_client.generate_presigned_url('get_object',
+                                        Params={'Bucket': bucket,
+                                                'Key': key},
+                                        ExpiresIn=duration)
+            _LOGGER.info(
+                f"Created SignedUrl for file with key {key} from S3 bucket {bucket}"
+            )
+        except botocore.exceptions.ClientError as err:
+            _LOGGER.error(f"SignedURL error: {err}")
+    ## Fire event to Home Assistant event bus with type s3_signed_url with URL key and data value
+        hass.bus.fire("s3_signed_url", {"URL": URL})
+
     # Register our service with Home Assistant.
     hass.services.async_register(DOMAIN, PUT_SERVICE, put_file)
     hass.services.async_register(DOMAIN, COPY_SERVICE, copy_file)
     hass.services.async_register(DOMAIN, DELETE_SERVICE, delete_file)
+    hass.services.async_register(DOMAIN, SIGN_SERVICE, create_presigned_url)
     return True
 
 
