@@ -34,3 +34,15 @@ delete:
     key:
       description: key of object to delete
       example: my_key/snapshot.jpg
+signurl:
+  description: Create pre-signed URL for S3 object.
+  fields:
+    bucket:
+      description: S3 bucket of file
+      example: my_bucket
+    key:
+      description: key of object
+      example: my_key/snapshot.jpg
+    duration:
+      description: validity period in seconds of url.
+      example: 360
