@@ -30,6 +30,7 @@ KEY = "key"
 KEY_DESTINATION = "key_destination"
 KEY_SOURCE = "key_source"
 STORAGE_CLASS = "storage_class"
+CONTENT_TYPE = "content_type"
 
 DEFAULT_REGION = "us-east-1"
 SUPPORTED_REGIONS = [
@@ -89,6 +90,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
         key = call.data.get(KEY)
         file_path = call.data.get(FILE_PATH)
         storage_class = call.data.get(STORAGE_CLASS, "STANDARD")
+        content_type = call.data.get(CONTENT_TYPE)
 
         if storage_class not in STORAGE_CLASSES:
             _LOGGER.error("Invalid storage class %s", storage_class)
@@ -108,6 +110,9 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
         file_name = os.path.basename(file_path)
         extra_args = {"StorageClass": storage_class}
+        if content_type:
+            extra_args.update({"ContentType": content_type})
+          
         try:
             s3_client.upload_file(Filename=file_path, Bucket=bucket, Key=key, ExtraArgs=extra_args)
             _LOGGER.info(
