@@ -111,7 +111,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
         file_name = os.path.basename(file_path)
         extra_args = {"StorageClass": storage_class}
         if content_type:
-          extra_args.update({"ContentType": content_type})
+            extra_args.update({"ContentType": content_type})
           
         try:
             s3_client.upload_file(Filename=file_path, Bucket=bucket, Key=key, ExtraArgs=extra_args)
