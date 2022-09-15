@@ -31,6 +31,7 @@ KEY = "key"
 KEY_DESTINATION = "key_destination"
 KEY_SOURCE = "key_source"
 STORAGE_CLASS = "storage_class"
+CONTENT_TYPE = "content_type"
 DURATION = "duration"
 
 DEFAULT_REGION = "us-east-1"
