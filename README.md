@@ -62,6 +62,19 @@ Example data for service call:
 }
 ```
 
+### Sign URL Service
+The S3 entity exposes a `signurl` service for generating pre-signed URLs with a defined validity period for accessing content already stored in S3 with a URL.  Run this action after you call the S3 copy service.  This service generates an event of type s3_signed_url which you can use as a trigger in a subsequent automation.  The event data returns a key-value pair of URL and the pre-signed URL.
+
+Example data for service call:
+```
+{
+  "bucket": "my_bucket",
+  "key": "my_key/file_source.jpg",
+  "duration": 300
+}
+```
+
+
 ## Example automation
 The following automation uses the [folder_watcher](https://www.home-assistant.io/integrations/folder_watcher/) to automatically upload files created in the local filesystem to S3:
 
