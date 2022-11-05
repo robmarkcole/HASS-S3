@@ -211,7 +211,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
                                                 'Key': key},
                                         ExpiresIn=duration)
             _LOGGER.info(
-                f"Created SignedUrl for file with key {key} from S3 bucket {bucket}"
+                f"Created SignedUrl of {URL} for file with key {key} from S3 bucket {bucket}"
             )
         except botocore.exceptions.ClientError as err:
             _LOGGER.error(f"SignedURL error: {err}")
