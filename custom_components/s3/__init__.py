@@ -46,6 +46,7 @@ SUPPORTED_REGIONS = [
     "eu-west-2",
     "eu-west-3",
     "eu-north-1",
+    "eu-south-1",
     "ap-southeast-1",
     "ap-southeast-2",
     "ap-northeast-2",
