@@ -1,5 +1,5 @@
 # HASS-S3
-This custom integration provides a service for interacting with S3 including uploading files to a bucket or copying them within and between buckets. 
+This custom integration provides a service for interacting with S3 including uploading files to a bucket or copying them within and between buckets.
 
 Create your S3 bucket via the AWS console, remember bucket names must be unique. I created a bucket with the default access settings (allpublic OFF) and created a bucket name with format `my-bucket-ransom_number` with `random_number` generated [on this website](https://onlinehashtools.com/generate-random-md5-hash).
 
@@ -26,6 +26,8 @@ Example data for service call:
   "key": "my_key/file.jpg",
   "file_path": "/some/path/file.jpg",
   "storage_class": "STANDARD_IA" # optional
+  "content_type" : "image/jpeg" # optional
+  "tags":  "tag1=aTagValue&tag2=anotherTagValue" # optional
 }
 ```
 
@@ -36,7 +38,7 @@ Example data for service call:
 ```
 {
   "bucket": "my_bucket",
-  "key_source": "my_key/file_source.jpg",  
+  "key_source": "my_key/file_source.jpg",
   "key_destination": "my_key/file_destination.jpg"
 }
 ```
@@ -58,7 +60,7 @@ Example data for service call:
 ```
 {
   "bucket": "my_bucket",
-  "key": "my_key/file_source.jpg",  
+  "key": "my_key/file_source.jpg",
 }
 ```
 

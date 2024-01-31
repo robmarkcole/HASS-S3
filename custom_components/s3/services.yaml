@@ -7,9 +7,15 @@ put:
     key:
       description: key to use
       example: my_key/snapshot.jpg
+    content_type:
+      description: Content type to set on uploaded object
+      example: "application/json"
     file_path:
       description: File on local filesystem to upload
       example: /data/camera_files/snapshot.jpg
+    tags:
+      description: Tags to add to uploaded object URL encoded
+      example: "tag1=value1&tag2=value2"
     storage_class:
       description: S3 storage class (defaults to STANDARD) [ STANDARD | REDUCED_REDUNDANCY | STANDARD_IA | ONEZONE_IA | INTELLIGENT_TIERING | GLACIER | DEEP_ARCHIVE ]
       example: STANDARD_IA

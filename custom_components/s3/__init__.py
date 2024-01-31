@@ -3,7 +3,6 @@ import asyncio
 import logging
 import os
 import voluptuous as vol
-
 import boto3
 import botocore
 
@@ -33,7 +32,7 @@ KEY_SOURCE = "key_source"
 STORAGE_CLASS = "storage_class"
 CONTENT_TYPE = "content_type"
 DURATION = "duration"
-
+TAGS = "tags"
 DEFAULT_REGION = "us-east-1"
 SUPPORTED_REGIONS = [
     "us-east-1",
@@ -94,7 +93,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
         file_path = call.data.get(FILE_PATH)
         storage_class = call.data.get(STORAGE_CLASS, "STANDARD")
         content_type = call.data.get(CONTENT_TYPE)
-
+        tag_list = call.data.get(TAGS)
         if storage_class not in STORAGE_CLASSES:
             _LOGGER.error("Invalid storage class %s", storage_class)
             return
@@ -112,10 +111,19 @@ async def async_setup(hass: HomeAssistant, config: dict):
             return
 
         file_name = os.path.basename(file_path)
+
         extra_args = {"StorageClass": storage_class}
         if content_type:
             extra_args.update({"ContentType": content_type})
-          
+            _LOGGER.debug(
+                f"Using content-type {content_type}  upload {file_name}"
+            )
+        if tag_list:
+            extra_args.update({"Tagging": tag_list})
+            _LOGGER.debug(
+                f"Adding tags {tag_list} for file: {file_name}"
+            )
+
         try:
             s3_client.upload_file(Filename=file_path, Bucket=bucket, Key=key, ExtraArgs=extra_args)
             _LOGGER.info(
@@ -150,7 +158,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
         if s3_client is None:
             _LOGGER.error("S3 client instance not found")
             return
-        
+
         copy_source = {
             'Bucket': bucket_source,
             'Key': key_source
