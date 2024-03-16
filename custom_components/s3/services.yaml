@@ -1,54 +1,110 @@
 put:
+  name: Upload file
   description: Upload file to S3.
   fields:
     bucket:
       description: S3 bucket to receive upload
+      required: true
       example: my_bucket
+      selector:
+        text:
     key:
       description: key to use
+      required: true
       example: my_key/snapshot.jpg
+      selector:
+        text:
     content_type:
       description: Content type to set on uploaded object
       example: "application/json"
+      selector:
+        text:
     file_path:
       description: File on local filesystem to upload
+      required: true
       example: /data/camera_files/snapshot.jpg
+      selector:
+        text:
     tags:
       description: Tags to add to uploaded object URL encoded
       example: "tag1=value1&tag2=value2"
+      selector:
+        text:
     storage_class:
-      description: S3 storage class (defaults to STANDARD) [ STANDARD | REDUCED_REDUNDANCY | STANDARD_IA | ONEZONE_IA | INTELLIGENT_TIERING | GLACIER | DEEP_ARCHIVE ]
-      example: STANDARD_IA
+      description: S3 storage class
+      default: STANDARD
+      selector:
+        select:
+          options:
+            - label: Standard
+              value: STANDARD
+            - label: Standard, Infrequent Access
+              value: STANDARD_IA
+            - label: One Zone, Infrequent Access
+              value: ONEZONE_IA
+            - label: Reduced Redundancy
+              value: REDUCED_REDUNDANCY
+            - label: Intelligent-Tiering
+              value: INTELLIGENT_TIERING
+            - label: Glacier
+              value: GLACIER
+            - label: Glacier Deep Archive
+              value: DEEP_ARCHIVE
+            - label: Glacier, Instant Retrieval
+              value: GLACIER_IRcopy:
 copy:
+  name: Copy file
   description: Copy file from one location in s3 to another.
   fields:
     bucket:
       description: Source and destination S3 bucket
       example: my_bucket
+      selector:
+        text:
     key_source:
       description: key to copy from
       example: my_key/snapshot.jpg
+      selector:
+        text:
     key_destination:
       description: key to copy to
       example: my_key/snapshot.jpg
+      selector:
+        text:
 delete:
+  name: Delete file
   description: Delete object from S3.
   fields:
     bucket:
       description: S3 bucket to delete from
       example: my_bucket
+      selector:
+        text:
     key:
       description: key of object to delete
       example: my_key/snapshot.jpg
+      selector:
+        text:
 signurl:
+  name: Generate signed URL
   description: Create pre-signed URL for S3 object.
   fields:
     bucket:
       description: S3 bucket of file
       example: my_bucket
+      selector:
+        text:
     key:
       description: key of object
       example: my_key/snapshot.jpg
+      selector:
+        text:
     duration:
       description: validity period in seconds of url.
       example: 360
+      selector:
+        number:
+          min: 0
+          step: 1
+          unit_of_measurement: "seconds"
+          mode: box
