@@ -59,16 +59,19 @@ copy:
     bucket:
       description: Source and destination S3 bucket
       example: my_bucket
+      required: true
       selector:
         text:
     key_source:
       description: key to copy from
       example: my_key/snapshot.jpg
+      required: true
       selector:
         text:
     key_destination:
       description: key to copy to
       example: my_key/snapshot.jpg
+      required: true
       selector:
         text:
 delete:
@@ -78,11 +81,13 @@ delete:
     bucket:
       description: S3 bucket to delete from
       example: my_bucket
+      required: true
       selector:
         text:
     key:
       description: key of object to delete
       example: my_key/snapshot.jpg
+      required: true
       selector:
         text:
 signurl:
@@ -92,11 +97,13 @@ signurl:
     bucket:
       description: S3 bucket of file
       example: my_bucket
+      required: true
       selector:
         text:
     key:
       description: key of object
       example: my_key/snapshot.jpg
+      required: true
       selector:
         text:
     duration:
