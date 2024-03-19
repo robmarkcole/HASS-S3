@@ -51,7 +51,7 @@ put:
             - label: Glacier Deep Archive
               value: DEEP_ARCHIVE
             - label: Glacier, Instant Retrieval
-              value: GLACIER_IRcopy:
+              value: GLACIER_IR
 copy:
   name: Copy file
   description: Copy file from one location in s3 to another.
