@@ -249,8 +249,5 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    hass.data[DOMAIN].remove(entry.entry_id)
-
-    if not hass.data[DOMAIN]:
-        hass.services.async_remove(DOMAIN, PUT_SERVICE)
+    hass.data[DOMAIN].pop(entry.entry_id, None)
     return True
