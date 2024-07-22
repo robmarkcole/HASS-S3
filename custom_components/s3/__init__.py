@@ -242,7 +242,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         CONF_SECRET_ACCESS_KEY: entry.data[CONF_SECRET_ACCESS_KEY],
     }
 
-    def boto_client(self, aws_config):
+    def boto_client(aws_config: dict):
         return boto3.client("s3", **aws_config)  # Will not raise error.
 
     client = await hass.async_add_executor_job(boto_client, aws_config)
