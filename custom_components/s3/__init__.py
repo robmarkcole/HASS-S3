@@ -32,6 +32,7 @@ KEY_SOURCE = "key_source"
 STORAGE_CLASS = "storage_class"
 CONTENT_TYPE = "content_type"
 DURATION = "duration"
+MESSAGE = "message"
 TAGS = "tags"
 DEFAULT_REGION = "us-east-1"
 SUPPORTED_REGIONS = [
@@ -205,6 +206,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
         bucket = call.data.get(BUCKET)
         key = call.data.get(KEY)
         duration = call.data.get(DURATION)
+        message = call.data.get(MESSAGE)
 
     # Generate a presigned URL for the S3 object
         s3_client = None
@@ -226,7 +228,10 @@ async def async_setup(hass: HomeAssistant, config: dict):
         except botocore.exceptions.ClientError as err:
             _LOGGER.error(f"SignedURL error: {err}")
     ## Fire event to Home Assistant event bus with type s3_signed_url with URL key and data value
-        hass.bus.fire("s3_signed_url", {"URL": URL})
+        hass.bus.fire("s3_signed_url", {
+            "URL": URL,
+            MESSAGE: message,
+        })
 
     # Register our service with Home Assistant.
     hass.services.async_register(DOMAIN, PUT_SERVICE, put_file)
