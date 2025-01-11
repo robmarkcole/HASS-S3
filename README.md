@@ -12,6 +12,7 @@ s3:
   aws_access_key_id: AWS_ACCESS_KEY
   aws_secret_access_key: AWS_SECRET_KEY
   region_name: eu-west-1 # optional region, default is us-east-1
+  endpoint_url: https://s3.eu-west-1.backblazeb2.com/
 ```
 
 ## Services

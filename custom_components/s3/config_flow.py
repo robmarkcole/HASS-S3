@@ -6,6 +6,7 @@ from . import (
     CONF_REGION,
     CONF_ACCESS_KEY_ID,
     CONF_SECRET_ACCESS_KEY,
+    CONF_ENDPOINT_URL,
     DEFAULT_REGION,
     SUPPORTED_REGIONS,
 )
@@ -27,6 +28,7 @@ class S3ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Optional(CONF_REGION, default=DEFAULT_REGION): vol.In(SUPPORTED_REGIONS),
                 vol.Required(CONF_ACCESS_KEY_ID): str,
                 vol.Required(CONF_SECRET_ACCESS_KEY): str,
+                vol.Optional(CONF_ENDPOINT_URL): str,
             }
         )
         return self.async_show_form(step_id="user", data_schema=data_schema)

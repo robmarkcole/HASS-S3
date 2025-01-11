@@ -15,6 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 CONF_REGION = "region_name"
 CONF_ACCESS_KEY_ID = "aws_access_key_id"
 CONF_SECRET_ACCESS_KEY = "aws_secret_access_key"
+CONF_ENDPOINT_URL = "endpoint_url"
 
 DOMAIN = "s3"
 COPY_SERVICE = "copy"
@@ -53,6 +54,7 @@ SUPPORTED_REGIONS = [
     "ap-northeast-1",
     "ap-south-1",
     "sa-east-1",
+    "ru-central1",
 ]
 
 STORAGE_CLASSES = [
@@ -73,6 +75,7 @@ S3_SCHEMA = vol.Schema(
         vol.Optional(CONF_REGION, default=DEFAULT_REGION): vol.In(SUPPORTED_REGIONS),
         vol.Required(CONF_ACCESS_KEY_ID): cv.string,
         vol.Required(CONF_SECRET_ACCESS_KEY): cv.string,
+        vol.Optional(CONF_ENDPOINT_URL): cv.string,
     }
 )
 
@@ -247,6 +250,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         CONF_ACCESS_KEY_ID: entry.data[CONF_ACCESS_KEY_ID],
         CONF_SECRET_ACCESS_KEY: entry.data[CONF_SECRET_ACCESS_KEY],
     }
+
+    # optional settings
+    if CONF_ENDPOINT_URL in entry.data:
+        aws_config[CONF_ENDPOINT_URL] = entry.data[CONF_ENDPOINT_URL]
 
     def boto_client(aws_config: dict):
         return boto3.client("s3", **aws_config)  # Will not raise error.
