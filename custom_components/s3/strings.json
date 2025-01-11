@@ -6,6 +6,7 @@
                 "title": "Configure Amazon S3",
                 "description": "Store files in Amazon Simple Storage Service",
                 "data": {
+                    "bucket": "Bucket Name",
                     "region_name": "AWS bucket Region",
                     "aws_access_key_id": "AWS Access Key",
                     "aws_secret_access_key": "AWS Secret Access Key",
@@ -15,6 +16,21 @@
         },
         "abort": {
             "already_configured": "This S3 bucket is already configured"
+        }
+    },
+    "options": {
+        "title": "Amazon S3",
+        "step": {
+            "init": {
+                "title": "Configure Amazon S3",
+                "description": "Store files in Amazon Simple Storage Service",
+                "data": {
+                    "bucket": "Bucket Name",
+                    "region_name": "AWS bucket Region",
+                    "aws_secret_access_key": "AWS Secret Access Key",
+                    "endpoint_url": "Endpoint URL for compatible services"
+                }
+            }
         }
     }
 }

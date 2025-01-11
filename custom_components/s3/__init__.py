@@ -1,5 +1,5 @@
 """AWS integration for S3."""
-import asyncio
+
 import logging
 import os
 import voluptuous as vol
@@ -7,7 +7,7 @@ import boto3
 import botocore
 
 import homeassistant.helpers.config_validation as cv
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import SOURCE_USER, ConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
@@ -244,7 +244,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+async def register_client(hass: HomeAssistant, entry: ConfigEntry):
     aws_config = {
         CONF_REGION: entry.data[CONF_REGION],
         CONF_ACCESS_KEY_ID: entry.data[CONF_ACCESS_KEY_ID],
@@ -261,9 +261,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     client = await hass.async_add_executor_job(boto_client, aws_config)
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = client
 
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+    await register_client(hass, entry)
+    entry.async_on_unload(entry.add_update_listener(update_listener))
+
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN].pop(entry.entry_id, None)
     return True
+
+
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry):
+    """Handle options update."""
+    await register_client(hass, entry)
