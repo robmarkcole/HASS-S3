@@ -55,6 +55,7 @@ SUPPORTED_REGIONS = [
     "ap-south-1",
     "sa-east-1",
     "ru-central1",
+    "us-phoenix-1",
 ]
 
 STORAGE_CLASSES = [
