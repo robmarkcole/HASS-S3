@@ -112,5 +112,5 @@ I recommend [Filezilla](https://filezilla-project.org/) for connecting to your S
 | Backblaze    | ?         | -                          |
 | Cloudflare   | ?         | -                          |
 | Oracle OSI   | ?         | -                          |
-| Yandex.Cloud | Yes       | put, delete                |
+| Yandex.Cloud | Yes       | put, copy, delete, signurl |
 | MinIO        | ?         | -                          |
