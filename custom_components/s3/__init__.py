@@ -5,6 +5,7 @@ import os
 import voluptuous as vol
 import boto3
 import botocore
+from botocore.client import Config
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.core import HomeAssistant, callback
@@ -65,8 +66,6 @@ STORAGE_CLASSES = [
     "GLACIER",
     "DEEP_ARCHIVE",
 ]
-
-REQUIREMENTS = ["boto3==1.9.252"]
 
 S3_SCHEMA = vol.Schema(
     {
@@ -243,13 +242,18 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     aws_config = {
-        CONF_REGION: entry.data[CONF_REGION],
+        CONF_REGION: entry.data.get(CONF_REGION, DEFAULT_REGION),
         CONF_ACCESS_KEY_ID: entry.data[CONF_ACCESS_KEY_ID],
         CONF_SECRET_ACCESS_KEY: entry.data[CONF_SECRET_ACCESS_KEY],
     }
 
     def boto_client(aws_config: dict):
-        return boto3.client("s3", **aws_config)  # Will not raise error.
+        # Use signature version 4 for all regions (required for regions other than us-east-1)
+        return boto3.client(
+            "s3",
+            **aws_config,
+            config=Config(signature_version='s3v4')
+        )
 
     client = await hass.async_add_executor_job(boto_client, aws_config)
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = client
