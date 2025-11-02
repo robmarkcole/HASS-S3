@@ -1,5 +1,5 @@
 """AWS integration for S3."""
-import asyncio
+
 import logging
 import os
 import voluptuous as vol
@@ -8,7 +8,7 @@ import botocore
 from botocore.client import Config
 
 import homeassistant.helpers.config_validation as cv
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import SOURCE_USER, ConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
@@ -16,6 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 CONF_REGION = "region_name"
 CONF_ACCESS_KEY_ID = "aws_access_key_id"
 CONF_SECRET_ACCESS_KEY = "aws_secret_access_key"
+CONF_ENDPOINT_URL = "endpoint_url"
 
 DOMAIN = "s3"
 COPY_SERVICE = "copy"
@@ -54,6 +55,8 @@ SUPPORTED_REGIONS = [
     "ap-northeast-1",
     "ap-south-1",
     "sa-east-1",
+    "ru-central1",
+    "us-phoenix-1",
 ]
 
 STORAGE_CLASSES = [
@@ -72,6 +75,7 @@ S3_SCHEMA = vol.Schema(
         vol.Optional(CONF_REGION, default=DEFAULT_REGION): vol.In(SUPPORTED_REGIONS),
         vol.Required(CONF_ACCESS_KEY_ID): cv.string,
         vol.Required(CONF_SECRET_ACCESS_KEY): cv.string,
+        vol.Optional(CONF_ENDPOINT_URL): cv.string,
     }
 )
 
@@ -240,12 +244,16 @@ async def async_setup(hass: HomeAssistant, config: dict):
     return True
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+async def register_client(hass: HomeAssistant, entry: ConfigEntry):
     aws_config = {
         CONF_REGION: entry.data.get(CONF_REGION, DEFAULT_REGION),
         CONF_ACCESS_KEY_ID: entry.data[CONF_ACCESS_KEY_ID],
         CONF_SECRET_ACCESS_KEY: entry.data[CONF_SECRET_ACCESS_KEY],
     }
+
+    # optional settings
+    if CONF_ENDPOINT_URL in entry.data:
+        aws_config[CONF_ENDPOINT_URL] = entry.data[CONF_ENDPOINT_URL]
 
     def boto_client(aws_config: dict):
         # Use signature version 4 for all regions (required for regions other than us-east-1)
@@ -258,9 +266,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     client = await hass.async_add_executor_job(boto_client, aws_config)
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = client
 
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+    await register_client(hass, entry)
+    entry.async_on_unload(entry.add_update_listener(update_listener))
+
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN].pop(entry.entry_id, None)
     return True
+
+
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry):
+    """Handle options update."""
+    await register_client(hass, entry)

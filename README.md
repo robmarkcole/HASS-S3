@@ -1,5 +1,5 @@
 # HASS-S3
-This custom integration provides a service for interacting with S3 including uploading files to a bucket or copying them within and between buckets.
+This custom integration provides a service for interacting with S3, including uploading files to a bucket or copying them within and between buckets. Additionally, it supports the use of S3-compatible services, such as Backblaze or MinIO, through the optional endpoint_url parameter, allowing for seamless integration with alternative storage providers.
 
 Create your S3 bucket via the AWS console, remember bucket names must be unique. I created a bucket with the default access settings (allpublic OFF) and created a bucket name with format `my-bucket-ransom_number` with `random_number` generated [on this website](https://onlinehashtools.com/generate-random-md5-hash).
 
@@ -12,6 +12,7 @@ s3:
   aws_access_key_id: AWS_ACCESS_KEY
   aws_secret_access_key: AWS_SECRET_KEY
   region_name: eu-west-1 # optional region, default is us-east-1
+  endpoint_url: https://s3.eu-west-1.backblazeb2.com/ # optional, URL for S3-compatible services like Backblaze or MinIO
 ```
 
 ## Services
@@ -101,3 +102,15 @@ Note you must configure `folder_watcher`.
 
 ## Accessing S3
 I recommend [Filezilla](https://filezilla-project.org/) for connecting to your S3 bucket, free version is available.
+
+## Supported S3 storages
+
+| Provider     | Supported | Tested commands            |
+| ------------ | --------- | -------------------------- |
+| AWS          | Yes       | put, copy, delete, signurl |
+| wasabi       | ?         | -                          |
+| Backblaze    | ?         | -                          |
+| Cloudflare   | ?         | -                          |
+| Oracle OSI   | ?         | -                          |
+| Yandex.Cloud | Yes       | put, copy, delete, signurl |
+| MinIO        | ?         | -                          |
